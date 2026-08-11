@@ -1,36 +1,147 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Setup WhatsApp Links
-    const waLink = `https://wa.me/${SITE_CONFIG.whatsapp}?text=Hi KKS Electrical, I would like to request a quote.`;
-    document.getElementById('wa-hero').href = waLink;
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Mobile Menu Toggle ---
+  const menuBtn = document.getElementById("menu-open");
+  const navMenu = document.getElementById("nav-menu");
 
-    // 2. Populate Services
-    const serviceGrid = document.getElementById('services-detailed');
-    SERVICES_DETAILED.forEach(service => {
-        const card = document.createElement('div');
-        card.className = 's-card reveal';
-        card.innerHTML = `
-            <i class="fa-solid ${service.icon}"></i>
-            <h3>${service.title}</h3>
-            <p>${service.desc}</p>
-            <ul style="list-style: none; margin-top: 20px; font-weight: 600; color: var(--primary); font-size: 0.9rem;">
-                ${service.features.map(f => `<li><i class="fa-solid fa-check" style="color: var(--secondary); margin-right: 10px;"></i> ${f}</li>`).join('')}
-            </ul>
-        `;
-        serviceGrid.appendChild(card);
+  menuBtn.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+    menuBtn.querySelector("i").classList.toggle("fa-bars");
+    menuBtn.querySelector("i").classList.toggle("fa-times");
+  });
+
+  // Close menu on link click
+  document.querySelectorAll(".nav-links a").forEach((link) => {
+    link.addEventListener("click", () => {
+      navMenu.classList.remove("active");
+      menuBtn.querySelector("i").classList.replace("fa-times", "fa-bars");
     });
+  });
 
-    // 3. Scroll Reveal Animation Logic
-    const reveal = () => {
-        const reveals = document.querySelectorAll('.reveal');
-        reveals.forEach(el => {
-            const windowHeight = window.innerHeight;
-            const elementTop = el.getBoundingClientRect().top;
-            const elementVisible = 150;
-            if (elementTop < windowHeight - elementVisible) {
-                el.classList.add('active');
-            }
+  // --- Theme Toggle Logic ---
+  const themeToggle = document.getElementById("theme-toggle");
+  const icon = themeToggle.querySelector("i");
+
+  const applyTheme = (theme) => {
+    document.body.setAttribute("data-theme", theme);
+    icon.className = theme === "light" ? "fas fa-moon" : "fas fa-sun";
+  };
+
+  const currentTheme = localStorage.getItem("theme") || "dark";
+  applyTheme(currentTheme);
+
+  themeToggle.addEventListener("click", () => {
+    const newTheme =
+      document.body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    localStorage.setItem("theme", newTheme);
+    applyTheme(newTheme);
+  });
+
+  // --- UI Initializer ---
+  const initUI = () => {
+    renderProjects("all");
+
+    // Render FAQs
+    const faqContainer = document.querySelector(".faq-container");
+    if (faqContainer) {
+      faqContainer.innerHTML = FAQS.map(
+        (f) => `
+          <div class="faq-item reveal">
+              <div class="faq-question">${f.q} <i class="fas fa-chevron-down"></i></div>
+              <div class="faq-answer"><div class="faq-answer-inner">${f.a}</div></div>
+          </div>
+        `,
+      ).join("");
+
+      document.querySelectorAll(".faq-item").forEach((item) => {
+        item.querySelector(".faq-question").addEventListener("click", () => {
+          const isOpen = item.classList.contains("faq-open");
+          document
+            .querySelectorAll(".faq-item")
+            .forEach((i) => i.classList.remove("faq-open"));
+          if (!isOpen) item.classList.add("faq-open");
         });
+      });
     }
-    window.addEventListener('scroll', reveal);
-    reveal(); // Run once on load
+  };
+
+  window.renderProjects = (filter) => {
+    const gallery = document.getElementById("portfolio-gallery");
+    if (!gallery) return;
+
+    const filtered =
+      filter === "all"
+        ? PROJECTS
+        : PROJECTS.filter((p) => p.category === filter);
+
+    gallery.style.opacity = "0";
+    setTimeout(() => {
+      gallery.innerHTML = filtered
+        .map(
+          (p) => `
+          <div class="portfolio-item active">
+              <div class="portfolio-img" style="background-image: url('${p.image}')"></div>
+              <div class="portfolio-info"><h4>${p.title}</h4><p>${p.desc}</p></div>
+          </div>
+        `,
+        )
+        .join("");
+      gallery.style.opacity = "1";
+    }, 200);
+  };
+
+  // Tab filtering
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderProjects(btn.dataset.filter);
+    });
+  });
+
+  // --- Scroll Observer ---
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("active");
+      });
+    },
+    { threshold: 0.1 },
+  );
+
+  initUI();
+  document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+  // --- Config Settings ---
+  document
+    .querySelectorAll(".btn-setmore")
+    .forEach((btn) => (btn.href = SITE_CONFIG.setmoreLink));
+  const waBtn = document.getElementById("wa-float");
+  if (waBtn) waBtn.href = `https://wa.me/${SITE_CONFIG.whatsapp}`;
+  const phoneDisp = document.getElementById("display-phone");
+  if (phoneDisp) phoneDisp.innerText = SITE_CONFIG.phone;
+
+  // --- Netlify Form ---
+  const contactForm = document.querySelector(".contact-form");
+  if (contactForm) {
+    contactForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = new FormData(contactForm);
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString(),
+      })
+        .then(() => {
+          contactForm.innerHTML = `
+            <div style="text-align:center; padding:50px; color:var(--text);">
+              <i class="fas fa-check-circle" style="font-size:3.5rem; color:#22c55e; margin-bottom:20px;"></i>
+              <h3>Request Received</h3>
+              <p>We'll get back to you shortly.</p>
+            </div>`;
+        })
+        .catch(() => alert("Error submitting. Please try again."));
+    });
+  }
 });
