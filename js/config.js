@@ -1,8 +1,8 @@
 const SITE_CONFIG = {
-  phone: "+6012-345 6789",
-  whatsapp: "60123456789",
-  email: "enquiry@kkselectrical.com",
-  setmoreLink: "https://kks-electrical.setmore.com",
+  phone: "+6017-9480135",
+  whatsapp: "60179480135",
+  email: "kkselectrical2628@gmail.com",
+  setmoreLink: "https://kkselectricalservice.setmore.com/",
 };
 
 const PROJECTS = [
