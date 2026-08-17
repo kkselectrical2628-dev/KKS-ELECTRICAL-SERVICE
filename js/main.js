@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuBtn = document.getElementById("menu-open");
   const navMenu = document.getElementById("nav-menu");
 
+  document.getElementById("current-year").textContent =
+    new Date().getFullYear();
+
   menuBtn.addEventListener("click", () => {
     navMenu.classList.toggle("active");
     menuBtn.querySelector("i").classList.toggle("fa-bars");
@@ -68,26 +71,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const gallery = document.getElementById("portfolio-gallery");
     if (!gallery) return;
 
-    const filtered =
-      filter === "all"
-        ? PROJECTS
-        : PROJECTS.filter((p) => p.category === filter);
+    const filtered = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.category === filter);
 
     gallery.style.opacity = "0";
     setTimeout(() => {
-      gallery.innerHTML = filtered
-        .map(
-          (p) => `
+      gallery.innerHTML = filtered.map((p, index) => `
           <div class="portfolio-item active">
-              <div class="portfolio-img" style="background-image: url('${p.image}')"></div>
-              <div class="portfolio-info"><h4>${p.title}</h4><p>${p.desc}</p></div>
+              <div class="portfolio-img" style="background-image: url('${p.images[0]}')"></div>
+              <div class="portfolio-info">
+                  <h4>${p.title}</h4>
+                  <p>${p.desc}</p>
+                  <span class="view-gallery-btn" onclick="openLightbox(${index})">
+                    <i class="fas fa-images"></i> View All ${p.images.length} Photos
+                  </span>
+              </div>
           </div>
-        `,
-        )
-        .join("");
+        `).join("");
       gallery.style.opacity = "1";
     }, 200);
   };
+
+  window.openLightbox = (projectIndex) => {
+      const project = PROJECTS[projectIndex];
+      const galleryContainer = document.getElementById("lightbox-gallery");
+      const lightbox = document.getElementById("lightbox");
+      
+      galleryContainer.innerHTML = project.images.map(img => `<img src="${img}" alt="work">`).join("");
+      lightbox.style.display = "flex";
+  };
+
+// Close lightbox logic
+document.querySelector(".close-lightbox").addEventListener("click", () => {
+    document.getElementById("lightbox").style.display = "none";
+});
 
   // Tab filtering
   document.querySelectorAll(".filter-btn").forEach((btn) => {
