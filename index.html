@@ -13,7 +13,19 @@
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
         <input type="text" name="name" />
         <input type="tel" name="phone" />
-        <select name="service"></select>
+        <select name="service">
+            <option value="3phase-upgrade"></option>
+            <option value="rewiring"></option>
+            <option value="new-wiring"></option>
+            <option value="autogate-bell"></option>
+            <option value="cctv"></option>
+            <option value="ceiling-fan"></option>
+            <option value="water-heater"></option>
+            <option value="aircond-install"></option>
+            <option value="aircond-service"></option>
+            <option value="troubleshooting"></option>
+            <option value="other"></option>
+        </select>
         <textarea name="message"></textarea>
     </form>
 
@@ -157,9 +169,17 @@
                     </div>
                     <select name="service" required>
                         <option value="">Select Service Needed</option>
-                        <option value="wiring">Electrical Wiring</option>
-                        <option value="db-upgrade">DB Box Upgrade</option>
-                        <option value="cctv">CCTV Installation</option>
+                        <option value="3phase-upgrade">1 Phase to 3 Phase DB & Meter Upgrade (Naiktaraf DB & Meter 1 Fasa ke 3 Fasa)</option>
+                        <option value="rewiring">Rewiring (Pendawaian Semula)</option>
+                        <option value="new-wiring">New Electrical Wiring (Pendawaian Elektrik Baharu)</option>
+                        <option value="autogate-bell">Autogate & Doorbell Installation (Pemasangan Autogate & Loceng Rumah)</option>
+                        <option value="cctv">CCTV Installation (Pemasangan Kamera Litar Tertutup)</option>
+                        <option value="ceiling-fan">Ceiling Fan Installation (Pemasangan Kipas Siling)</option>
+                        <option value="water-heater">Water Heater Installation (Pemasangan Pemanas Air)</option>
+                        <option value="aircond-install">Aircond Installation (Pemasangan Penyaman Udara)</option>
+                        <option value="aircond-service">Aircond Servicing (Penyelenggaraan Penghawa Dingin)</option>
+                        <option value="troubleshooting">Electrical Troubleshooting (Pemeriksaan Masalah Litar Pintas)</option>
+                        <option value="other">Other Inquiry (Lain-lain Pertanyaan)</option>
                     </select>
                     <textarea name="message" placeholder="Details..." required></textarea>
                     <button type="submit" class="btn btn-primary w-full">Submit Request</button>
